@@ -5,8 +5,8 @@ Smart House Arduino code
 ## Table of contents
 
 - [Signals](#signals)
-  * [Input signals](#input-signals:)
-  * [Output signals](#output-signals:)
+  * [Input signals](#input-signals)
+  * [Output signals](#output-signals)
 - [MQTT](#mqtt)
   * [About MQTT](#about-mqtt)
 ---
