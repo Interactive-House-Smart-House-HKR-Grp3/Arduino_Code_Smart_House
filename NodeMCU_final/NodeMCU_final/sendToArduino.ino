@@ -1,9 +1,9 @@
 
 /*
-   This page is used to send data to nodeMCU
+   This page is used to send data to Arduino
 
    Topic aliases created to shorten the time needed to send
-   data to Wi-Fi board. e.g. Instead of writing "smart_house/gui/fire_alarm&false"
+   data to Arduino board. e.g. Instead of writing "smart_house/gui/fire_alarm&false"
    to software serial, we are writing "fa&0"
    This enables us to always know the position of substrings
 
@@ -44,7 +44,9 @@
 
 */
 
-void sendToWiFi(char* dataToSend) {
+void sendToArduino(char* dataToSend) {
   mySerial.write(dataToSend);
+  Serial.write(dataToSend);
   mySerial.write('\n');
+  Serial.write('\n');
 }
