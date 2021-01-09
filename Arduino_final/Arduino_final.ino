@@ -1,30 +1,44 @@
 #include <SoftwareSerial.h>
 
-
-
 SoftwareSerial mySerial(A4, A5); // RX, TX
-int i;
-bool substring = false;
-char* topic;
-char* payload;
 
+// Pin setup
+// Analog
+const int elConSensor = A0;
+const int tempInSensor = A1;
+const int tempLoftSensor = A2;
+const int twilightSensor = A3;
+// Digital
+const byte fireAlarmSwitch = 2;
+const byte burglarAlarmSensor = 3;
+const byte waterLeakSwitch = 4;
+const byte stoveSwitch = 5;
+const byte windowSwitch = 6;
+const byte powerCut = 7;
+const byte tempOutSensor = 9;
+const byte fan = 10;
+// Variables
+int i;
+// Topic & Payload
 String t = "";
 String p = "";
-
+// Reaction testing
 int timeArrived = 0;
 int timeReacted = 0;
-
+// Command testing
 char serial_command = 0;
-
+// Message received via serial
 String msg;
+// Testing variables
 int timeNow;
 int timeNow2;
 int timeNow3;
+
 bool writing = false;
 
 const unsigned long eventInterval = 1000;
 unsigned long previousTime = 0;
-
+// Functionality variables
 bool alarmArmed = false;
 int fanSpeed = 0;
 bool autoMode = false;
@@ -33,10 +47,8 @@ bool inTmp = true;
 bool outTmp = false;
 bool elCon = false;
 
-void toggleLed(String, String);
-
+// fucntion prototypes
 void sendToWiFi(char*);
-
 String splitString(String, char[], uint8_t);
 
 void setup() {
@@ -109,7 +121,6 @@ void loop() {
       } else if (p.equals("0")) {
         alarmArmed = false;
         sendToWiFi(mssgArr);
-
       }
     } else if (t.equals("fa")) {
       if (p.equals("1")) {
@@ -167,31 +178,24 @@ void loop() {
       Serial.println("auto temp: ");
       Serial.println(p);
       sendToWiFi(mssgArr);
-
+    } else if (t.equals("ti")) {
+      sendOutputData(t, "22.2");
+    } else if (t.equals("to")) {
+      sendOutputData(t, "19.2");
+    } else if (t.equals("ec")) {
+      sendOutputData(t, "500");
     }
+
   }
-  //sendTempData();
 }
 
-void sendTempData() {
-  String msg = "ti&22.2";
-  int str_len = msg.length() + 1;
+void sendOutputData(String top, String pay) {
+  top += "&";
+  top += pay;
+  int str_len = top.length() + 1;
   char mssgArr[str_len];
-  msg.toCharArray(mssgArr, str_len);
+  top.toCharArray(mssgArr, str_len);
   sendToWiFi(mssgArr);
-  delay(800);
-  msg = "to&18.2";
-  str_len = msg.length() + 1;
-  mssgArr[str_len];
-  msg.toCharArray(mssgArr, str_len);
-  sendToWiFi(mssgArr);
-  delay(800);
-  msg = "ec&500";
-  str_len = msg.length() + 1;
-  mssgArr[str_len];
-  msg.toCharArray(mssgArr, str_len);
-  sendToWiFi(mssgArr);
-  delay(500);
 }
 
 void printReaction() {

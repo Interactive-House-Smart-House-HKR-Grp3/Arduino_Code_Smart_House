@@ -174,6 +174,27 @@ void callback(char* topic, byte* payload, unsigned int length) {
     pld.trim();
     mssg += pld;
 
+  } else if (tpc.equals("smart_house/cmd/temp_indoor")) {
+    mssg = "ti&";
+    for (int k = 0; k < length; k++) {
+      pld += (char)payload[k];
+    }
+    pld.trim();
+    mssg += pld;
+  } else if (tpc.equals("smart_house/cmd/temp_outdoor")) {
+    mssg = "to&";
+    for (int k = 0; k < length; k++) {
+      pld += (char)payload[k];
+    }
+    pld.trim();
+    mssg += pld;
+  } else if (tpc.equals("smart_house/cmd/el_consumption")) {
+    mssg = "ec&";
+    for (int k = 0; k < length; k++) {
+      pld += (char)payload[k];
+    }
+    pld.trim();
+    mssg += pld;
   }
   // Converting message to char array to send to Arduino
   int str_len = mssg.length() + 1;
@@ -321,6 +342,21 @@ void readFromArduino() { // to be replaced with new split string
       char pArr[strlng];
       p.toCharArray(pArr, strlng);
       client.publish("smart_house/gui/auto_temp_value", pArr);
+    } else if (t.equals("ti")) {
+      int strlng = p.length() + 1;
+      char pArr[strlng];
+      p.toCharArray(pArr, strlng);
+      client.publish("smart_house/gui/temp_indoor", pArr);
+    } else if (t.equals("to")) {
+      int strlng = p.length() + 1;
+      char pArr[strlng];
+      p.toCharArray(pArr, strlng);
+      client.publish("smart_house/gui/temp_outdoor", pArr);
+    } else if (t.equals("ec")) {
+      int strlng = p.length() + 1;
+      char pArr[strlng];
+      p.toCharArray(pArr, strlng);
+      client.publish("smart_house/gui/el_consumption", pArr);
     }
 
   }
@@ -342,4 +378,8 @@ void subscribeToTopics() {
   client.subscribe("smart_house/cmd/heating_loft");
   client.subscribe("smart_house/cmd/auto_mode");
   client.subscribe("smart_house/cmd/am_temp_value");
+  client.subscribe("smart_house/cmd/temp_indoor");
+  client.subscribe("smart_house/cmd/temp_outdoor");
+  client.subscribe("smart_house/cmd/el_consumption");
+  //
 }
