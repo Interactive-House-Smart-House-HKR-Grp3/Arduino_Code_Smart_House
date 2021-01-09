@@ -35,6 +35,7 @@ int timeNow2;
 int timeNow3;
 
 bool writing = false;
+bool canPrint = false;
 
 const unsigned long eventInterval = 1000;
 unsigned long previousTime = 0;
@@ -43,30 +44,52 @@ bool alarmArmed = false;
 int fanSpeed = 0;
 bool autoMode = false;
 bool autoTemp = 0;
-bool inTmp = true;
-bool outTmp = false;
-bool elCon = false;
+
+int inLightValue;
+int outLightValue;
+int doorValue;
+int windowValue;
+int stoveValue;
+int fireValue;
+int waterValue;
+int inLightLastValue = 0;
+int outLightLastValue = 0;
+int windowLastValue = 0;
+int stoveLastValue = 0;
+int fireLastValue = 0;
+int waterLastValue = 0;
+
 
 // fucntion prototypes
 void sendToWiFi(char*);
 String splitString(String, char[], uint8_t);
 
 void setup() {
+  //MUX
   pinMode(12, OUTPUT); //MUX1
   pinMode(13, OUTPUT); //MUX2
   pinMode(11, OUTPUT); //MUX3
   pinMode(8, OUTPUT);  //MUX4
+  // The rest of the sensors/switches
+  pinMode(fireAlarmSwitch, INPUT);
+  pinMode(burglarAlarmSensor, INPUT);
+  pinMode(waterLeakSwitch, INPUT);
+  pinMode(stoveSwitch, INPUT);
+  pinMode(windowSwitch, INPUT);
+  pinMode(powerCut, INPUT);
+  pinMode(tempOutSensor, INPUT);
+  pinMode(fan, OUTPUT);
 
   Serial.begin(9600);
   while (!Serial) {
-    ;
+    ; // wait
   }
   Serial.println("Serial started!");
 
   // set the data rate for the SoftwareSerial port
-  mySerial.begin(4800);
+  mySerial.begin(19200);
   while (!mySerial.available()) {
-    ;
+    ; // wait
   }
   timeNow = millis();
   timeNow2 = timeNow;
@@ -78,6 +101,16 @@ void loop() {
   /*if (Serial.available()  > 0) {
     serial_command = Serial.read();
     }*/
+  if (autoMode) {
+    // do something for auto mode
+    canPrint = true;
+    if (canPrint) {
+      Serial.println("Auto Mode ON");
+      canPrint = false;
+      autoMode = false;
+    }
+  }
+
   // Separating topic and message
   while (mySerial.available() > 0) {
     timeNow = millis();
@@ -185,7 +218,6 @@ void loop() {
     } else if (t.equals("ec")) {
       sendOutputData(t, "500");
     }
-
   }
 }
 

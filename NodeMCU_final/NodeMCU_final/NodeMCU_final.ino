@@ -251,7 +251,7 @@ void setup() {
   Serial.println("Serial started!");
 
   // set the data rate for the SoftwareSerial port
-  mySerial.begin(4800);
+  mySerial.begin(19200);
   mySerial.println("Hello, world?");
 
   setup_wifi();
